@@ -19,7 +19,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Activity关闭监听
+        //Activity关闭监听。日志TAG:WFMA
         WFMA.start();
     }
 }
