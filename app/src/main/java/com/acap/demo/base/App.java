@@ -3,6 +3,7 @@ package com.acap.demo.base;
 import android.app.Application;
 import android.content.Context;
 
+import com.acap.compliance.Compliance;
 import com.acap.wfma.WFMA;
 
 /**
@@ -19,5 +20,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         WFMA.start();
+        Compliance.start();
     }
 }

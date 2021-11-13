@@ -1,10 +1,10 @@
-package com.acap.wfma.interior;
+package com.acap.hook.interior;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Process;
 
-import com.acap.wfma.runtime.LifecycleStateRequest;
+import com.acap.hook.runtime.LifecycleStateRequest;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -54,7 +54,6 @@ public class Utils {
     public static String getLifecycleState(Object clientTransaction) {
         try {
             Object mDestroyActivityItem = XposedHelpers.findMethodExact(clientTransaction.getClass(), "getLifecycleStateRequest").invoke(clientTransaction);
-//            Object mDestroyActivityItem = XposedHelpers.findField(clientTransaction.getClass(), "mLifecycleStateRequest").get(clientTransaction);
             Object mLifecycleState = XposedHelpers.findMethodExact(mDestroyActivityItem.getClass(), "getTargetState").invoke(mDestroyActivityItem);
             return LifecycleStateRequest.format((Integer) mLifecycleState);
         } catch (Throwable e) {
@@ -67,7 +66,7 @@ public class Utils {
         try {
             print(o, o.getClass());
         } catch (Throwable e) {
-            Logs.e(e);
+            HookLogs.e(e);
         }
     }
 
@@ -75,7 +74,7 @@ public class Utils {
         try {
             print(null, cls);
         } catch (Throwable e) {
-            Logs.e(e);
+            HookLogs.e(e);
         }
     }
 
@@ -84,14 +83,14 @@ public class Utils {
             return;
         }
 
-        Logs.i(MessageFormat.format("-------------------------------- {0} --------------------------------", cls.getName()));
+        HookLogs.i(MessageFormat.format("-------------------------------- {0} --------------------------------", cls.getName()));
         Field[] declaredFields = cls.getDeclaredFields();
         for (Field item : declaredFields) {
             if (o == null) {
-                Logs.i(MessageFormat.format("{0} {1} ", item.getType().getSimpleName(), item.getName()));
+                HookLogs.i(MessageFormat.format("{0} {1} ", item.getType().getSimpleName(), item.getName()));
             } else {
                 item.setAccessible(true);
-                Logs.i(MessageFormat.format("{0} {1} = {2}", item.getType().getSimpleName(), item.getName(), item.get(o)));
+                HookLogs.i(MessageFormat.format("{0} {1} = {2}", item.getType().getSimpleName(), item.getName(), item.get(o)));
 
                 if ("mActivityToken".equals(item.getName())) {
                     print(item.get(o));
@@ -100,7 +99,7 @@ public class Utils {
         }
         Method[] declaredMethods = cls.getDeclaredMethods();
         for (Method item : declaredMethods) {
-            Logs.i(MessageFormat.format("fun {0} {1}()", item.getReturnType().getSimpleName(), item.getName()));
+            HookLogs.i(MessageFormat.format("fun {0} {1}()", item.getReturnType().getSimpleName(), item.getName()));
         }
         print(o, cls.getSuperclass());
     }

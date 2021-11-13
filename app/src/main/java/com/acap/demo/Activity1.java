@@ -13,6 +13,8 @@ public class Activity1 extends Activity {
         setContentView(R.layout.activity_1);
         findViewById(R.id.view_FinishSelf).setOnClickListener(v -> finish());
         findViewById(R.id.view_StartActivity2).setOnClickListener(v -> startActivity(new Intent(this, Activity2.class)));
+        findViewById(R.id.view_ComplianceActivity).setOnClickListener(v -> startActivity(new Intent(this, ComplianceActivity.class)));
+
     }
 
 

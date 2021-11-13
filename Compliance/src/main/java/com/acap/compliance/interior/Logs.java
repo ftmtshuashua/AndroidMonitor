@@ -1,8 +1,10 @@
-package com.acap.wfma.interior;
+package com.acap.compliance.interior;
 
 import android.util.Log;
 
 import java.text.MessageFormat;
+
+import stack.PrivacyComplianceStack;
 
 /**
  * <pre>
@@ -15,7 +17,7 @@ import java.text.MessageFormat;
 public class Logs {
 
     //  Who finish my activity !
-    private static final String TAG = "HooK-WFMA";
+    private static final String TAG = "HooK-Compliance";
 
     private static void i(String tag, String msg) {
         Log.i(MessageFormat.format("{0}-{1}", TAG, tag), msg);
@@ -33,31 +35,6 @@ public class Logs {
         e("e", "", e);
     }
 
-    public static void onCreate(Class<?> cls) {
-        i("onCreate", cls.getName());
-    }
-
-    public static void onStart(Class<?> cls) {
-        i("onStart", cls.getName());
-    }
-
-    public static void onResume(Class<?> cls) {
-        i("onResume", cls.getName());
-    }
-
-    public static void onPause(Class<?> cls) {
-        i("onPause", cls.getName());
-    }
-
-    public static void onStop(Class<?> cls) {
-        i("onStop", cls.getName());
-    }
-
-    public static void onDestroy(Class<?> cls) {
-        i("onDestroy", cls.getName());
-    }
-
-
     /**
      * 清理 Throwable 中的无关调用栈
      */
@@ -66,7 +43,7 @@ public class Logs {
         StringBuffer SB = new StringBuffer();
         for (String s : split) {
             String trim = s.trim();
-            if (trim.startsWith("at com.acap.wfma")) {
+            if (trim.startsWith("at com.acap.compliance")) {
                 continue;
             }
             if (trim.startsWith("at de.robv.android.xposed.XC_MethodHook")) {
@@ -85,6 +62,10 @@ public class Logs {
 
     public static String getString(Throwable tr) {
         return Log.getStackTraceString(tr);
+    }
+
+    public static void call(String msg) {
+        trim(new PrivacyComplianceStack(msg));
     }
 
 }

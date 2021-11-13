@@ -1,6 +1,8 @@
-package com.acap.wfma.hook;
+package com.acap.hook;
 
-import com.acap.wfma.interior.Logs;
+
+import com.acap.hook.interior.HookLogs;
+import com.swift.sandhook.xposedcompat.XposedCompat;
 
 import java.util.Arrays;
 
@@ -14,6 +16,7 @@ import de.robv.android.xposed.XposedHelpers;
  *
  * Created by A·Cap on 2021/10/13 10:24
  * </pre>
+ *
  * @author A·Cap
  */
 public class HookModel {
@@ -21,6 +24,13 @@ public class HookModel {
     private String methodName;
     private Object[] methodParamsType;
 
+    public static Class<?> getClass(String clazz) {
+        return XposedHelpers.findClass(clazz, XposedCompat.classLoader);
+    }
+
+    public HookModel(String clazz) {
+        this.clazz = getClass(clazz);
+    }
 
     public HookModel(Class<?> clazz) {
         this.clazz = clazz;
@@ -40,7 +50,7 @@ public class HookModel {
                 try {
                     before.call(param);
                 } catch (Throwable e) {
-                    Logs.e(e);
+                    HookLogs.e(e);
                 }
             }
         });
@@ -54,7 +64,7 @@ public class HookModel {
                 try {
                     after.call(param);
                 } catch (Throwable e) {
-                    Logs.e(e);
+                    HookLogs.e(e);
                 }
             }
         });
@@ -66,7 +76,7 @@ public class HookModel {
             objects[objects.length - 1] = xc;
             XposedHelpers.findAndHookMethod(clazz, methodName, objects);
         } catch (Throwable e) {
-            Logs.e(e);
+            HookLogs.e(e);
         }
 
 

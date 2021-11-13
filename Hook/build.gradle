@@ -30,5 +30,8 @@ android {
 }
 
 dependencies {
-    api project(":Hook")
+    api 'com.swift.sandhook:hooklib:4.2.0'
+    api 'com.swift.sandhook:nativehook:4.2.0' // need for android 11
+    api 'com.swift.sandhook:xposedcompat:4.2.0'
+    api 'com.github.ChickenHook:RestrictionBypass:2.2'
 }

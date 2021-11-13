@@ -28,6 +28,7 @@ public class App extends Application {
 ```
 repositories {
     maven { url 'https://www.jitpack.io' }
+    jcenter()
 }
 
 dependencies {

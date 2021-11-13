@@ -1,10 +1,10 @@
-package com.acap.wfma.hook.bean;
+package com.acap.hook.bean;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.IBinder;
 
-import com.acap.wfma.interior.Logs;
+import com.acap.hook.interior.HookLogs;
 import com.swift.sandhook.xposedcompat.XposedCompat;
 
 import java.lang.reflect.Field;
@@ -34,7 +34,7 @@ public class ActivityThread {
             mCurrentActivityThread = getActivityThread();
             this.mActivities = XposedHelpers.findField(mCurrentActivityThread.getClass(), "mActivities").get(mCurrentActivityThread);
         } catch (Throwable e) {
-            Logs.e(e);
+            HookLogs.e(e);
         }
     }
 
@@ -44,7 +44,7 @@ public class ActivityThread {
             Object activity = XposedHelpers.getObjectField(ActivityClientRecord, "activity");
             return (Activity) activity;
         } catch (Throwable e) {
-            Logs.e(e);
+            HookLogs.e(e);
         }
         return null;
     }
@@ -68,8 +68,6 @@ public class ActivityThread {
             m.setAccessible(true);
             Object mCurrentActivityThread = m.invoke(null, new Object[0]);
             if ((mCurrentActivityThread == null) && (context != null)) {
-                //反射访问Application中的mLoadedApk，所以这里的context需要为Application实例
-                //可通过getApplicationContext()获取
                 Field mLoadedApk = context.getClass().getField("mLoadedApk");
                 mLoadedApk.setAccessible(true);
                 Object apk = mLoadedApk.get(context);
@@ -79,7 +77,7 @@ public class ActivityThread {
             }
             return mCurrentActivityThread;
         } catch (Throwable ignore) {
-            Logs.e(ignore);
+            HookLogs.e(ignore);
         }
         return null;
     }

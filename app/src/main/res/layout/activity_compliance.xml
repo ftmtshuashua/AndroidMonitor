@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
-
-
-    <Button
-        android:id="@+id/view_FinishSelf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="关闭自己" />
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <Button
-        android:id="@+id/view_StartActivity2"
+        android:id="@+id/view_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="StartActivity2" />
+        android:text="-" />
 
     <Button
-        android:id="@+id/view_ComplianceActivity"
+        android:id="@+id/view_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="合规检测" />
+        android:text="-" />
+
+    <Button
+        android:id="@+id/view_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
 </LinearLayout>

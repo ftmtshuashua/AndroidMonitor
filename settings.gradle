@@ -1,12 +1,6 @@
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
-}
 rootProject.name = "AndoridMonitor"
 include ':app'
-include ':Runtime'
+//include ':Runtime'
 include ':WFMA'
+include ':Compliance'
+include ':Hook'

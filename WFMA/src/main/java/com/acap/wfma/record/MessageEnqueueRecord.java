@@ -5,11 +5,11 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
 
-import com.acap.wfma.compat.HandlerCompat;
-import com.acap.wfma.hook.bean.ActivityThread;
+import com.acap.hook.bean.ActivityThread;
+import com.acap.hook.compat.HandlerCompat;
 import com.acap.wfma.interior.Logs;
-import com.acap.wfma.interior.Utils;
-import com.acap.wfma.runtime.LifecycleStateRequest;
+import com.acap.hook.interior.Utils;
+import com.acap.hook.runtime.LifecycleStateRequest;
 import com.swift.sandhook.xposedcompat.utils.ApplicationUtils;
 
 import java.text.MessageFormat;

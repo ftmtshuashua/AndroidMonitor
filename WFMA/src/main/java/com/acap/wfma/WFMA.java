@@ -6,20 +6,17 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.MessageQueue;
 
-import com.acap.wfma.compat.HandlerCompat;
-import com.acap.wfma.hook.HookModel;
-import com.acap.wfma.hook.OnAfterHookedMethod;
-import com.acap.wfma.hook.OnBeforeHookedMethod;
+import com.acap.hook.HookModel;
+import com.acap.hook.OnAfterHookedMethod;
+import com.acap.hook.OnBeforeHookedMethod;
+import com.acap.hook.compat.HandlerCompat;
 import com.acap.wfma.interior.Logs;
-import com.acap.wfma.interior.Utils;
 import com.acap.wfma.record.FinishCallRecord;
 import com.acap.wfma.record.MessageEnqueueRecord;
 import com.acap.wfma.record.UnknownRecord;
-import com.acap.wfma.runtime.LifecycleStateRequest;
 import com.acap.wfma.structure.LimitList;
 import com.swift.sandhook.xposedcompat.XposedCompat;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +36,6 @@ public final class WFMA {
     private static boolean mInit = false;
 
     private static final LimitList<FinishCallRecord> RECORD_FINISH_CALL = new LimitList<>(100);
-    //    private static final LimitList<MessageDispatchRecord> RECORD_MESSAGE_DISPATCH = new LimitList<>(100);
     private static final LimitList<MessageEnqueueRecord> RECORD_MESSAGE_ENQUEUE = new LimitList<>(100);
 
     private WFMA() {
@@ -71,15 +67,6 @@ public final class WFMA {
     private static void init() throws Throwable {
         XposedCompat.classLoader = ClassLoader.getSystemClassLoader();
 
-
-//        Object activityThread = Utils.getActivityThread(XposedCompat.context);
-//        Object mTransactionExecutor = activityThread.getClass().getDeclaredField("mTransactionExecutor").get(activityThread);
-
-//        Class<?> TransactionExecutor = Class.forName("android.app.servertransaction.TransactionExecutor");
-//        Utils.print(TransactionExecutor);
-//        Field debug_resolver = TransactionExecutor.getField("DEBUG_RESOLVER");
-//        debug_resolver.setAccessible(true);
-//        debug_resolver.set(null, true);
     }
 
     private static void collectionFinishCall() {
@@ -89,25 +76,6 @@ public final class WFMA {
 
 
     private static void collectionHandlerMessage() {
-//        new HookModel(Handler.class).setMethod("dispatchMessage", Message.class)
-//                .findAndHookMethod((OnBeforeHookedMethod) param -> {
-//                    Message message = (Message) param.args[0];
-//
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {    // 9.0
-//                        if (message.what == HandlerCompat.P.WHAT_EXECUTE_TRANSACTION) {
-//                            Logs.i(MessageFormat.format("---<<< {0} : {1}", message.toString(), Utils.getLifecycleState(message.obj)));
-////                            Utils.print(message.obj);
-////                            Logs.i(" ");
-//                            RECORD_MESSAGE_DISPATCH.add(new MessageDispatchRecord(message));
-//                        }
-//                    } else {
-//                        if (message.what == HandlerCompat.Default.DESTROY_ACTIVITY) {
-//                            Logs.i(MessageFormat.format("---<<< {0} : {1}", message.toString(), LifecycleStateRequest.ON_DESTROY));
-//                            RECORD_MESSAGE_DISPATCH.add(new MessageDispatchRecord(message));
-//                        }
-//
-//                    }
-//                });
 
         new HookModel(MessageQueue.class).setMethod("enqueueMessage", Message.class, long.class)
                 .findAndHookMethod((OnBeforeHookedMethod) param -> {
