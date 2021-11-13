@@ -32,8 +32,7 @@ repositories {
 }
 
 dependencies {
-    // 预计
-    // implementation 'com.github.ftmtshuashua:AndroidMonitor:1.0.0-beta'
+    implementation 'com.github.ftmtshuashua:AndroidMonitor:1.0.0-beta'
 }
 ```
 
