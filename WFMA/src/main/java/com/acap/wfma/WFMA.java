@@ -10,6 +10,8 @@ import com.acap.hook.HookModel;
 import com.acap.hook.OnAfterHookedMethod;
 import com.acap.hook.OnBeforeHookedMethod;
 import com.acap.hook.compat.HandlerCompat;
+import com.acap.hook.interior.Utils;
+import com.acap.hook.runtime.LifecycleStateRequest;
 import com.acap.wfma.interior.Logs;
 import com.acap.wfma.record.FinishCallRecord;
 import com.acap.wfma.record.MessageEnqueueRecord;
@@ -17,6 +19,7 @@ import com.acap.wfma.record.UnknownRecord;
 import com.acap.wfma.structure.LimitList;
 import com.swift.sandhook.xposedcompat.XposedCompat;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +84,7 @@ public final class WFMA {
                 .findAndHookMethod((OnBeforeHookedMethod) param -> {
                     Message message = (Message) param.args[0];
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        if (message.what == HandlerCompat.P.WHAT_EXECUTE_TRANSACTION) {
+                        if (message.what == HandlerCompat.P.WHAT_EXECUTE_TRANSACTION && LifecycleStateRequest.STR_ON_DESTROY.equals(Utils.getLifecycleState(message.obj))) {
 //                            Logs.i(MessageFormat.format("--->>> {0} : {1}", message.toString(), Utils.getLifecycleState(message.obj)));
                             RECORD_MESSAGE_ENQUEUE.add(new MessageEnqueueRecord(message));
                         }

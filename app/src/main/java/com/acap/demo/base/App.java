@@ -20,6 +20,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         WFMA.start();
-        Compliance.start();
+//        Compliance.start();
     }
 }
