@@ -1,6 +1,6 @@
 rootProject.name = "AndoridMonitor"
 include ':app'
 //include ':Runtime'
-include ':WFMA'
-include ':Compliance'
+include ':Monitor_WFMA'
+include ':Monitor_Privacy_Compliance'
 include ':Hook'
