@@ -1,6 +1,7 @@
 package com.acap.wfma;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -10,11 +11,11 @@ import com.acap.hook.HookModel;
 import com.acap.hook.OnAfterHookedMethod;
 import com.acap.hook.OnBeforeHookedMethod;
 import com.acap.hook.compat.HandlerCompat;
-import com.acap.hook.interior.Utils;
+import com.acap.hook.interior.ClientTransactionHelper;
 import com.acap.hook.runtime.LifecycleStateRequest;
 import com.acap.wfma.interior.Logs;
 import com.acap.wfma.record.FinishCallRecord;
-import com.acap.wfma.record.MessageEnqueueRecord;
+import com.acap.wfma.record.MessageDestroyRecord;
 import com.acap.wfma.record.UnknownRecord;
 import com.acap.wfma.structure.LimitList;
 import com.swift.sandhook.xposedcompat.XposedCompat;
@@ -39,7 +40,7 @@ public final class WFMA {
     private static boolean mInit = false;
 
     private static final LimitList<FinishCallRecord> RECORD_FINISH_CALL = new LimitList<>(100);
-    private static final LimitList<MessageEnqueueRecord> RECORD_MESSAGE_ENQUEUE = new LimitList<>(100);
+    private static final LimitList<MessageDestroyRecord> RECORD_MESSAGE_ENQUEUE = new LimitList<>(100);
 
     private WFMA() {
     }
@@ -62,6 +63,7 @@ public final class WFMA {
 
         collectionFinishCall();
         collectionHandlerMessage();
+//        collectionConfigChange();
         lifecycle();
         destroyCall();
     }
@@ -77,24 +79,36 @@ public final class WFMA {
                 .findAndHookMethod((OnBeforeHookedMethod) param -> RECORD_FINISH_CALL.add(new FinishCallRecord((Activity) param.thisObject)));
     }
 
-
     private static void collectionHandlerMessage() {
-
         new HookModel(MessageQueue.class).setMethod("enqueueMessage", Message.class, long.class)
                 .findAndHookMethod((OnBeforeHookedMethod) param -> {
                     Message message = (Message) param.args[0];
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        if (message.what == HandlerCompat.P.WHAT_EXECUTE_TRANSACTION && LifecycleStateRequest.STR_ON_DESTROY.equals(Utils.getLifecycleState(message.obj))) {
-//                            Logs.i(MessageFormat.format("--->>> {0} : {1}", message.toString(), Utils.getLifecycleState(message.obj)));
-                            RECORD_MESSAGE_ENQUEUE.add(new MessageEnqueueRecord(message));
+                        if (message.what == HandlerCompat.P.WHAT_EXECUTE_TRANSACTION) {
+                            Logs.i(MessageFormat.format("--->>> {0} : {1}", message.toString(), ClientTransactionHelper.getLifecycleState(message.obj)));
+                            if (LifecycleStateRequest.STR_ON_DESTROY.equals(ClientTransactionHelper.getLifecycleState(message.obj))) {
+                                RECORD_MESSAGE_ENQUEUE.add(new MessageDestroyRecord(message));
+                            }
                         }
                     } else {
                         if (message.what == HandlerCompat.Default.DESTROY_ACTIVITY) {
 //                            Logs.i(MessageFormat.format("--->>> {0} : {1}", message.toString(), LifecycleStateRequest.ON_DESTROY));
-                            RECORD_MESSAGE_ENQUEUE.add(new MessageEnqueueRecord(message));
+                            RECORD_MESSAGE_ENQUEUE.add(new MessageDestroyRecord(message));
                         }
 
                     }
+                });
+    }
+
+    private static void collectionConfigChange() {
+        new HookModel("android.app.ActivityThread")
+                .setMethod("performActivityConfigurationChanged", Activity.class, Configuration.class, Configuration.class, int.class, boolean.class)
+                .findAndHookMethod((OnBeforeHookedMethod) param -> {
+                    Activity activity = (Activity) param.args[0];
+                    Configuration arg = (Configuration) param.args[1];
+
+                    Logs.i(MessageFormat.format("配置发生改变 ： {0} -> {1}", activity.getClass().getSimpleName(), arg));
+
                 });
     }
 
@@ -124,7 +138,7 @@ public final class WFMA {
                         return;
                     }
 
-                    MessageEnqueueRecord messageEnqueue = findMessageEnqueue(activity);
+                    MessageDestroyRecord messageEnqueue = findMessageDestroy(activity);
                     if (messageEnqueue != null) {
                         Logs.trim(messageEnqueue.stack);
                         return;
@@ -148,10 +162,10 @@ public final class WFMA {
         return null;
     }
 
-    private static MessageEnqueueRecord findMessageEnqueue(Activity activity) {
-        List<MessageEnqueueRecord> array = new ArrayList<>(RECORD_MESSAGE_ENQUEUE);
+    private static MessageDestroyRecord findMessageDestroy(Activity activity) {
+        List<MessageDestroyRecord> array = new ArrayList<>(RECORD_MESSAGE_ENQUEUE);
         for (int i = array.size() - 1; i >= 0; i--) {
-            MessageEnqueueRecord record = array.get(i);
+            MessageDestroyRecord record = array.get(i);
             if (record.mActivity == activity) {
                 return record;
             }

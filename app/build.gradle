@@ -43,8 +43,8 @@ android {
 }
 
 dependencies {
-//    implementation project(':WFMA')
-//    implementation project(':Compliance')
+    implementation project(':Monitor_WFMA')
+    implementation project(':Monitor_Privacy_Compliance')
 
-    implementation 'com.github.ftmtshuashua:AndroidMonitor:1.0.0-beta1'
+//    implementation 'com.github.ftmtshuashua:AndroidMonitor:1.0.0-beta1'
 }

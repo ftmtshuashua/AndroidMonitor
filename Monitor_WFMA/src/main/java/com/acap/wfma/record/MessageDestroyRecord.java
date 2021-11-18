@@ -7,7 +7,7 @@ import android.os.IBinder;
 import android.os.Message;
 
 import com.acap.hook.bean.ActivityThread;
-import com.acap.hook.interior.Utils;
+import com.acap.hook.interior.ClientTransactionHelper;
 import com.acap.hook.runtime.LifecycleStateRequest;
 import com.acap.wfma.interior.Logs;
 import com.swift.sandhook.xposedcompat.utils.ApplicationUtils;
@@ -27,12 +27,13 @@ import stack.ActivityFinishStack;
  *
  * @author A·Cap
  */
-public class MessageEnqueueRecord extends BaseRecord<Message> {
+public class MessageDestroyRecord extends BaseRecord<Message> {
     public Activity mActivity;
 
-    public MessageEnqueueRecord(Message obj) {
+    public MessageDestroyRecord(Message obj) {
         super(obj);
     }
+
 
     @Override
     protected void onInit() {
@@ -49,9 +50,9 @@ public class MessageEnqueueRecord extends BaseRecord<Message> {
     }
 
     @Override
-    protected Throwable generate(Message obj) {
+    protected Throwable generate(Message message) {
         String nameForUid = ApplicationUtils.currentApplication().getPackageManager().getNameForUid(Binder.getCallingUid());
-        return new ActivityFinishStack(MessageFormat.format("{0} receives an {2} signal from {1}", getActivity(), nameForUid, LifecycleStateRequest.STR_ON_DESTROY));
+        return new ActivityFinishStack(MessageFormat.format("{0} receives an {2} signal from {1} >> {3}", getActivity(), nameForUid, LifecycleStateRequest.STR_ON_DESTROY, message));
     }
 
     private String getActivity() {
@@ -63,7 +64,7 @@ public class MessageEnqueueRecord extends BaseRecord<Message> {
 
     @Override
     public String toString() {
-        return "MessageEnqueueRecord{" +
+        return "MessageDestroyRecord{" +
                 "obj=" + obj +
                 ", mActivity=" + mActivity +
                 '}';

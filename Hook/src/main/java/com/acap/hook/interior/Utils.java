@@ -48,20 +48,6 @@ public class Utils {
         return "";
     }
 
-    /**
-     * 客户端活动在事务执行后的最终生命周期状态
-     */
-    public static String getLifecycleState(Object clientTransaction) {
-        try {
-            Object mDestroyActivityItem = XposedHelpers.findMethodExact(clientTransaction.getClass(), "getLifecycleStateRequest").invoke(clientTransaction);
-            Object mLifecycleState = XposedHelpers.findMethodExact(mDestroyActivityItem.getClass(), "getTargetState").invoke(mDestroyActivityItem);
-            return LifecycleStateRequest.format((Integer) mLifecycleState);
-        } catch (Throwable e) {
-            return "GET-ERROR";
-        }
-    }
-
-
     public static void print(Object o) {
         try {
             print(o, o.getClass());
